@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Table } from 'antd';
+import { Button, Table } from 'antd';
 import config from '../../config';
 
 function BookingList() {
@@ -77,6 +77,25 @@ function BookingList() {
           ))}
         </ul>
       ),
+    },
+    {
+      title: '',
+      dataIndex: '',
+      key: 'actions',
+      render: (text, safari) => {
+        return <Button type='primary'
+          danger
+          onClick={(e) => {
+            axios.delete(`${config.baseUrl}/book-controller/${safari._id}`).then((val) => {
+              axios.get(`${config.baseUrl}/book-controller`).then((val) => {
+                setBookings(val.data)
+              })
+            })
+          }}
+        >
+          Delete
+        </Button>
+      },
     },
   ];
 
