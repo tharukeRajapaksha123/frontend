@@ -18,6 +18,7 @@ import ActivityList from '../activities/ActivityList';
 import AddActivity from '../activities/AddActivity';
 import LoadingContext from '../../contexts/LoadingContext';
 import Loading from '../common/Loading,';
+import BookingList from '../bookings/BookingList';
 
 const { Header, Content, Sider } = Layout;
 
@@ -69,6 +70,9 @@ function AdminDashboard() {
                 <Link to="activities/new">Add Activity</Link>
               </Menu.Item>
             </Menu.SubMenu>
+            <Menu.Item key="9">
+                <Link to="bookings/">Bookings</Link>
+              </Menu.Item>
           </Menu>
         </Sider>
         <Layout>
@@ -85,6 +89,7 @@ function AdminDashboard() {
                 <Route path="/foods/new" element={<AddFood />} />
                 <Route path="/activities" element={<ActivityList />} />
                 <Route path="/activities/new" element={<AddActivity />} />
+                <Route path="/bookings" element={<BookingList />} />
               </Routes>
             </div>
           </Content>
