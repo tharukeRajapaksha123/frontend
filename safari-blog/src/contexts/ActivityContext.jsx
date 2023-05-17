@@ -18,7 +18,7 @@ function reducer(state, action) {
             return { ...state, activities: action.payload };
         case 'DELETE_ACTIVITY':
             return {
-                ...state, loading: activities.map((safari) => {
+                ...state, activities: activities.map((safari) => {
                     return safari._id !== action.payload.id;
                 })
             };

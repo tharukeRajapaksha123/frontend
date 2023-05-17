@@ -18,7 +18,7 @@ const fetchRooms = async (dispatch) => {
     })
 }
 
-const addRoom= async (data, dispatch) => {
+const addRoom = async (data, dispatch) => {
     dispatch({
         type: "LOADING",
         payload: false,
@@ -43,16 +43,18 @@ const addRoom= async (data, dispatch) => {
 }
 
 
-const updateRoom= async (id, data, dispatch) => {
+const updateRoom = async (id, data, dispatch) => {
     dispatch({
         type: "LOADING",
         payload: false,
     })
     await axios.put(`${config.baseUrl}/room-controller/${id}`, data)
-
-
+    await fetchRooms(dispatch)
         .catch(err => {
-
+            dispatch({
+                type: "ERROR",
+                payload: err,
+            })
         })
     dispatch({
         type: "LOADING",
@@ -60,16 +62,21 @@ const updateRoom= async (id, data, dispatch) => {
     })
 }
 
-const deleteRoom= async (id, dispatch) => {
+const deleteRoom = async (id, dispatch) => {
     dispatch({
         type: "LOADING",
         payload: false,
     })
-    await axios.delete(`${config.baseUrl}/room-controller/${id}`)
+    await axios.delete(`${config.baseUrl}/room-controller/${id}`).then((val) => {
+        dispatch({
+            type: "DELETE_ROOM",
+            payload: id,
+        })
+    })
         .catch(err => {
             dispatch({
-                type: "DELETE_ROOM",
-                payload: id,
+                type: "ERROR",
+                payload: err,
             })
         })
     dispatch({
@@ -79,4 +86,4 @@ const deleteRoom= async (id, dispatch) => {
 }
 
 
-export default { fetchRooms, updateRoom, addRoom, deleteRoom}
+export default { fetchRooms, updateRoom, addRoom, deleteRoom }

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Modal, Form, Input, InputNumber, Button } from 'antd';
 import { RoomContext } from '../../contexts/RoomContext';
 import room_service from '../../services/room_service';
@@ -13,7 +13,7 @@ function EditRoom({ room, onOk, visible }) {
         name: room.name,
         image: room.image,
         price: room.price,
-        numOfBeds: room.numOfBeds,
+        numOfBeds: room.num_of_beds,
         description: room.description,
       });
     }
@@ -23,7 +23,7 @@ function EditRoom({ room, onOk, visible }) {
     form.validateFields()
       .then(async values => {
         if (room) {
-          await room_service.updateRoom(room._id, values, dispatch);
+          await room_service.updateRoom(room._id, { ...values, num_of_beds: values.numOfBeds }, dispatch);
           await room_service.fetchRooms(dispatch);
         }
         onOk();
@@ -51,6 +51,7 @@ function EditRoom({ room, onOk, visible }) {
         </Button>,
       ]}
     >
+      {room && <img src={room.image} alt="room" style={{ width: "100%", heght: "100%" }} />}
       <Form form={form} layout="vertical">
         <Form.Item
           name="name"

@@ -18,7 +18,7 @@ function reducer(state, action) {
             return { ...state, foods: action.payload };
         case 'DELETE_FOOD':
             return {
-                ...state, loading: foods.map((safari) => {
+                ...state, foods: foods.map((safari) => {
                     return safari._id !== action.payload.id;
                 })
             };

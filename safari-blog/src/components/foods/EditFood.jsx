@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { Modal, Form, Input, InputNumber, Button } from 'antd';
 import { FoodContext } from '../../contexts/FoodContext';
 import food_service from '../../services/food_service';
@@ -50,6 +50,7 @@ function EditFood({ food, onOk, visible }) {
         </Button>,
       ]}
     >
+      {food && <img src={food.image} alt="food" style={{ width: "100%", height: "100%" }} />}
       <Form form={form} layout="vertical">
         <Form.Item
           name="name"

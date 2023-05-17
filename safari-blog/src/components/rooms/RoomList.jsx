@@ -28,7 +28,7 @@ function RoomList() {
     },
     {
       title: 'Number of Beds',
-      dataIndex: 'numOfBeds',
+      dataIndex: 'num_of_beds',
       key: 'numOfBeds',
     },
     {

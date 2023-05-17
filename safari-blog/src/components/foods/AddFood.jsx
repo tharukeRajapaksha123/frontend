@@ -1,23 +1,39 @@
 import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Form, Input, InputNumber, Button, message } from 'antd';
+import { Form, Input, InputNumber, Button, message, Upload } from 'antd';
 import { FoodContext } from '../../contexts/FoodContext';
 import food_service from '../../services/food_service';
+import { UploadOutlined } from '@ant-design/icons';
+import LoadingContext from '../../contexts/LoadingContext';
+import file_upload_service from '../../services/file_upload_service';
 
 function AddFood() {
   const [state, dispatch] = useContext(FoodContext);
+  const [loadingState, loadingDispatch] = useContext(LoadingContext)
   const history = useNavigate();
   const [form] = Form.useForm();
+  const [selectedImage, setSelectedImage] = useState(null)
+  const [imageUrl, setImageUrl] = useState(null);
 
   const handleSubmit = async (values) => {
-    await food_service.addFood(values, dispatch);
+    file_upload_service.uploadImage(selectedImage, loadingDispatch).then(async (url) => {
+      await food_service.addFood({ ...values, image: url }, dispatch);
 
-    if (state.error) {
-      message.error('Add Food failed ' + state.error);
-    } else {
-      message.success('Food added successfully');
-      form.resetFields();
-      history('/foods');
+      if (state.error) {
+        message.error('Add Food failed ' + state.error);
+      } else {
+        message.success('Food added successfully');
+        form.resetFields();
+        history('/foods');
+      }
+    })
+  };
+
+  const handleImageUpload = (info) => {
+    if (info.file.status === 'done') {
+      const imageUrl = URL.createObjectURL(info.file.originFileObj);
+      setSelectedImage(info.file)
+      setImageUrl(imageUrl);
     }
   };
 
@@ -56,10 +72,18 @@ function AddFood() {
         name="image"
         rules={[
           { required: true, message: 'Please input the food image URL!' },
-          { type: 'url', message: 'Please enter a valid URL.' },
+        
         ]}
       >
-        <Input />
+        <Upload
+          name="image"
+          accept="image/*"
+          beforeUpload={() => false}
+          onChange={handleImageUpload}
+        >
+          <Button icon={<UploadOutlined />}>Select Image</Button>
+        </Upload>
+        {imageUrl && <img src={imageUrl} alt="Safari" style={{ width: '100%', marginTop: 10 }} />}
       </Form.Item>
 
       <Form.Item

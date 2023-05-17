@@ -2,8 +2,9 @@ import React, { useContext, useEffect, useState } from 'react';
 import { ActivityContext } from '../../contexts/ActivityContext';
 import { Button, Popconfirm, Table } from 'antd';
 import activity_service from '../../services/activity_service';
-import Loading from '../common/Loading';
+
 import EditActivity from './EditActivity';
+import Loading from '../common/Loading,';
 
 function ActivityList() {
   const [state, dispatch] = useContext(ActivityContext);
@@ -11,7 +12,7 @@ function ActivityList() {
   const [selectedActivity, setSelectedActivity] = useState(null);
 
   useEffect(() => {
-    activity_service.fetchActivities(dispatch);
+    activity_service.fetchActivitys(dispatch);
   }, [dispatch]);
 
   const columns = [

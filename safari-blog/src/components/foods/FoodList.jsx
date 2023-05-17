@@ -1,9 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { FoodContext } from '../../contexts/FoodContext';
 import { Button, Popconfirm, Table } from 'antd';
-import food_service from '../../services/food_service';
-import Loading from '../common/Loading';
+
+
 import EditFood from './EditFood';
+import food_service from '../../services/food_service';
+import Loading from '../common/Loading,';
 
 function FoodList() {
   const [state, dispatch] = useContext(FoodContext);

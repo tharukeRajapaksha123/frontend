@@ -1,23 +1,37 @@
-import React, { useContext } from 'react';
+import React, { useContext,useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Form, Input, InputNumber, Button, message } from 'antd';
+import { Form, Input, InputNumber, Button, message, Upload } from 'antd';
 import { ActivityContext } from '../../contexts/ActivityContext';
 import activity_service from '../../services/activity_service';
-
+import { UploadOutlined } from '@ant-design/icons';
+import LoadingContext from '../../contexts/LoadingContext';
+import file_upload_service from '../../services/file_upload_service';
 function AddActivity() {
   const [state, dispatch] = useContext(ActivityContext);
+  const [loadingState, loadingDispatch] = useContext(LoadingContext)
   const history = useNavigate();
   const [form] = Form.useForm();
-
+  const [selectedImage, setSelectedImage] = useState(null)
+  const [imageUrl, setImageUrl] = useState(null);
   const handleSubmit = async (values) => {
-    await activity_service.addActivity(values, dispatch);
-
-    if (state.error) {
-      message.error('Add Activity failed ' + state.error);
-    } else {
-      message.success('Activity added successfully');
-      form.resetFields();
-      history('/activities');
+    await file_upload_service.uploadImage(selectedImage, loadingDispatch).then(async url => {
+      await activity_service.addActivity({...values,image : url}, dispatch);
+      if (state.error) {
+        message.error('Add Activity failed ' + state.error);
+      } else {
+        message.success('Activity added successfully');
+        form.resetFields();
+        history('/activities');
+      }
+    }).catch(err => {
+      message.error('Add Activity failed ');
+    })
+  };
+  const handleImageUpload = (info) => {
+    if (info.file.status === 'done') {
+      const imageUrl = URL.createObjectURL(info.file.originFileObj);
+      setSelectedImage(info.file)
+      setImageUrl(imageUrl);
     }
   };
 
@@ -50,16 +64,22 @@ function AddActivity() {
       >
         <InputNumber />
       </Form.Item>
-
       <Form.Item
         label="Image URL"
         name="image"
         rules={[
-          { required: true, message: 'Please input the activity image URL!' },
-          { type: 'url', message: 'Please enter a valid URL.' },
+          { required: true, message: 'Please input the food image URL!' },
         ]}
       >
-        <Input />
+        <Upload
+          name="image"
+          accept="image/*"
+          beforeUpload={() => false}
+          onChange={handleImageUpload}
+        >
+          <Button icon={<UploadOutlined />}>Select Image</Button>
+        </Upload>
+        {imageUrl && <img src={imageUrl} alt="Safari" style={{ width: '100%', marginTop: 10 }} />}
       </Form.Item>
 
       <Form.Item

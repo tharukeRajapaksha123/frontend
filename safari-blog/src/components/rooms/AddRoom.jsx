@@ -1,23 +1,47 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Form, Input, InputNumber, Button, message } from 'antd';
+import { Form, Input, InputNumber, Button, message, Upload } from 'antd';
 import { RoomContext } from '../../contexts/RoomContext';
 import room_service from '../../services/room_service';
+import { UploadOutlined } from '@ant-design/icons';
 
+import LoadingContext from '../../contexts/LoadingContext';
+import file_upload_service from '../../services/file_upload_service';
 function AddRoom() {
   const [state, dispatch] = useContext(RoomContext);
+  const [loadingState, loadingDispatch] = useContext(LoadingContext)
   const history = useNavigate();
   const [form] = Form.useForm();
+  const [selectedImage, setSelectedImage] = useState(null)
+  const [imageUrl, setImageUrl] = useState(null);
 
   const handleSubmit = async (values) => {
-    await room_service.addRoom(values, dispatch);
+    await file_upload_service.uploadImage(selectedImage, loadingDispatch).then(async url => {
+      await room_service.addRoom({ ...values, image: url }, dispatch).then((val) => {
+        message.success('Room added successfully');
+        form.resetFields();
+        history('/rooms');
 
-    if (state.error) {
-      message.error('Add Room failed ' + state.error);
-    } else {
-      message.success('Room added successfully');
-      form.resetFields();
-      history('/rooms');
+      }).catch(err => {
+        dispatch({
+          type: "ERROR",
+          payload: err
+        })
+      });
+
+    }).catch(err => {
+      console.log("add safari failed " + err)
+      message.error("Safari Adding Failed")
+    })
+      ;
+
+  };
+
+  const handleImageUpload = (info) => {
+    if (info.file.status === 'done') {
+      const imageUrl = URL.createObjectURL(info.file.originFileObj);
+      setSelectedImage(info.file)
+      setImageUrl(imageUrl);
     }
   };
 
@@ -63,16 +87,22 @@ function AddRoom() {
       </Form.Item>
 
       <Form.Item
-        label="Image URL"
+        label="Image"
         name="image"
         rules={[
-          { required: true, message: 'Please input the room image URL!' },
-          { type: 'url', message: 'Please enter a valid URL.' },
+          { required: true, message: 'Please select an image!' },
         ]}
       >
-        <Input />
+        <Upload
+          name="image"
+          accept="image/*"
+          beforeUpload={() => false}
+          onChange={handleImageUpload}
+        >
+          <Button icon={<UploadOutlined />}>Select Image</Button>
+        </Upload>
+        {imageUrl && <img src={imageUrl} alt="Safari" style={{ width: '100%', marginTop: 10 }} />}
       </Form.Item>
-
       <Form.Item
         label="Description"
         name="description"

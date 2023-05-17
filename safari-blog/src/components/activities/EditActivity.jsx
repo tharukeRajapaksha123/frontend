@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Modal, Form, Input, InputNumber, Button } from 'antd';
 import { ActivityContext } from '../../contexts/ActivityContext';
 import activity_service from '../../services/activity_service';
@@ -23,7 +23,7 @@ function EditActivity({ activity, onOk, visible }) {
       .then(async values => {
         if (activity) {
           await activity_service.updateActivity(activity._id, values, dispatch);
-          await activity_service.fetchActivities(dispatch);
+          await activity_service.fetchActivitys(dispatch);
         }
         onOk();
       })
@@ -50,6 +50,7 @@ function EditActivity({ activity, onOk, visible }) {
         </Button>,
       ]}
     >
+      {activity && <img src={activity.image} style={{ width: "100%", height: "100%" }} />}
       <Form form={form} layout="vertical">
         <Form.Item
           name="name"

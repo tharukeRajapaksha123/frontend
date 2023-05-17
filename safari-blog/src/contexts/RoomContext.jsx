@@ -18,7 +18,7 @@ function reducer(state, action) {
             return { ...state, rooms: action.payload };
         case 'DELETE_ROOM':
             return {
-                ...state, loading: rooms.map((safari) => {
+                ...state, rooms: rooms.map((safari) => {
                     return safari._id !== action.payload.id;
                 })
             };

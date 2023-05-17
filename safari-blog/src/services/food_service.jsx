@@ -1,14 +1,14 @@
 import axios from "axios"
 import config from "../config"
 
-const fetchActivitys = async (dispatch) => {
+const fetchFoods = async (dispatch) => {
     dispatch({
         type: "LOADING",
         payload: true,
     })
-    await axios.get(`${config.baseUrl}/activity-controller`).then((data) => {
+    await axios.get(`${config.baseUrl}/food-controller`).then((data) => {
         dispatch({
-            type: "SET_ACTIVITYS",
+            type: "SET_FOODS",
             payload: data.data
         })
     })
@@ -18,15 +18,15 @@ const fetchActivitys = async (dispatch) => {
     })
 }
 
-const addActivity = async (data, dispatch) => {
+const addFood = async (data, dispatch) => {
     dispatch({
         type: "LOADING",
         payload: false,
     })
-    await axios.post(`${config.baseUrl}/activity-controller`, data)
+    await axios.post(`${config.baseUrl}/food-controller`, data)
         .then((value) => {
             dispatch({
-                type: "SET_ACTIVITY",
+                type: "SET_FOOD",
                 payload: value,
             })
         })
@@ -43,13 +43,13 @@ const addActivity = async (data, dispatch) => {
 }
 
 
-const updateActivity = async (id, data, dispatch) => {
+const updateFood = async (id, data, dispatch) => {
     dispatch({
         type: "LOADING",
         payload: false,
     })
-    await axios.put(`${config.baseUrl}/activity-controller/${id}`, data)
-    await fetchActivitys(dispatch)
+    await axios.put(`${config.baseUrl}/food-controller/${id}`, data)
+    await fetchFoods(dispatch)
         .catch(err => {
             dispatch({
                 type: "ERROR",
@@ -62,14 +62,14 @@ const updateActivity = async (id, data, dispatch) => {
     })
 }
 
-const deleteActivity = async (id, dispatch) => {
+const deleteFood = async (id, dispatch) => {
     dispatch({
         type: "LOADING",
         payload: false,
     })
-    await axios.delete(`${config.baseUrl}/activity-controller/${id}`).then((val) => {
+    await axios.delete(`${config.baseUrl}/food-controller/${id}`).then((val) => {
         dispatch({
-            type: "DELETE_ACTIVITY",
+            type: "DELETE_FOOD",
             payload: id,
         })
     })
@@ -86,4 +86,4 @@ const deleteActivity = async (id, dispatch) => {
 }
 
 
-export default { fetchActivitys, updateActivity, addActivity, deleteActivity }
+export default { fetchFoods, updateFood, addFood, deleteFood }

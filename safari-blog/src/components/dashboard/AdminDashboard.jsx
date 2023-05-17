@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Layout, Menu } from 'antd';
 import {
   BrowserRouter as Router,
@@ -12,12 +12,23 @@ import SafariList from '../safaris/SafariList';
 import AddSafari from '../safaris/AddSafari';
 import RoomList from '../rooms/RoomList';
 import AddRoom from '../rooms/AddRoom';
-// import FoodList from '../foods/FoodList';
-// import AddFood from '../foods/AddFood';
-// import AddActivity from '../activities/AddActivity';
+import FoodList from '../foods/FoodList';
+import AddFood from '../foods/AddFood';
+import ActivityList from '../activities/ActivityList';
+import AddActivity from '../activities/AddActivity';
+import LoadingContext from '../../contexts/LoadingContext';
+import Loading from '../common/Loading,';
+
 const { Header, Content, Sider } = Layout;
 
 function AdminDashboard() {
+
+  const [state,dispatch] = useContext(LoadingContext)
+
+  if(state.loading){
+    return <Loading/>
+  }
+
   return (
     <Router>
       <Layout style={{ minHeight: '100vh' }}>
@@ -70,10 +81,10 @@ function AdminDashboard() {
                 <Route path="/safaris/new" element={<AddSafari />} />
                 <Route path="/rooms" element={<RoomList />} />
                 <Route path="/rooms/new" element={<AddRoom />} />
-                {/* <Route path="/foods" element={<FoodList />} />
+                <Route path="/foods" element={<FoodList />} />
                 <Route path="/foods/new" element={<AddFood />} />
                 <Route path="/activities" element={<ActivityList />} />
-                <Route path="/activities/new" element={<AddActivity />} /> */}
+                <Route path="/activities/new" element={<AddActivity />} />
               </Routes>
             </div>
           </Content>
