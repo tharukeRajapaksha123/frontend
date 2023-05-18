@@ -16,6 +16,7 @@ function AddRoom() {
   const [imageUrl, setImageUrl] = useState(null);
 
   const handleSubmit = async (values) => {
+    console.log(selectedImage)
     await file_upload_service.uploadImage(selectedImage, loadingDispatch).then(async url => {
       await room_service.addRoom({ ...values, image: url }, dispatch).then((val) => {
         message.success('Room added successfully');
@@ -31,17 +32,18 @@ function AddRoom() {
 
     }).catch(err => {
       console.log("add safari failed " + err)
-      message.error("Safari Adding Failed")
+      message.error("Room Adding Failed")
     })
       ;
 
   };
 
-  const handleImageUpload = (info) => {
-    if (info.file.status === 'done') {
-      const imageUrl = URL.createObjectURL(info.file.originFileObj);
-      setSelectedImage(info.file)
-      setImageUrl(imageUrl);
+  const handleImageUpload = async (file) => {
+    try {
+      setSelectedImage(file)
+      console.log("file seted")
+    } catch (error) {
+      message.error('Failed to upload image');
     }
   };
 
@@ -97,7 +99,7 @@ function AddRoom() {
           name="image"
           accept="image/*"
           beforeUpload={() => false}
-          onChange={handleImageUpload}
+          onChange={(info) => handleImageUpload(info.file)}
         >
           <Button icon={<UploadOutlined />}>Select Image</Button>
         </Upload>

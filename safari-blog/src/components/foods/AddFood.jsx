@@ -16,17 +16,20 @@ function AddFood() {
   const [imageUrl, setImageUrl] = useState(null);
 
   const handleSubmit = async (values) => {
-    file_upload_service.uploadImage(selectedImage, loadingDispatch).then(async (url) => {
-      await food_service.addFood({ ...values, image: url }, dispatch);
+    if (selectedImage != null) {
+      console.log(selectedImage)
+      file_upload_service.uploadImage(selectedImage, loadingDispatch).then(async (url) => {
+        await food_service.addFood({ ...values, image: url }, dispatch);
 
-      if (state.error) {
-        message.error('Add Food failed ' + state.error);
-      } else {
-        message.success('Food added successfully');
-        form.resetFields();
-        history('/foods');
-      }
-    })
+        if (state.error) {
+          message.error('Add Food failed ' + state.error);
+        } else {
+          message.success('Food added successfully');
+          form.resetFields();
+          history('/foods');
+        }
+      })
+    }
   };
 
   const handleImageUpload = (info) => {
@@ -72,7 +75,7 @@ function AddFood() {
         name="image"
         rules={[
           { required: true, message: 'Please input the food image URL!' },
-        
+
         ]}
       >
         <Upload
