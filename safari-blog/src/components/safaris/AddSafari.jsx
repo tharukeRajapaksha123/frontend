@@ -16,25 +16,27 @@ function AddSafari() {
   const [imageUrl, setImageUrl] = useState(null);
 
   const handleSubmit = async (values) => {
-    await file_upload_service.uploadImage(selectedImage, loadingDispatch).then(async url => {
-      await safari_service.addSafari({ ...values, image: url }, dispatch).then((value) => {
-        message.success("Safari Added Successfully")
-        history("/safaris")
-      }).catch(err => {
-        console.log("add safari failed " + err)
-        message.error("Safari Adding Failed")
-      })
-    });
-  };
-
-  const handleImageUpload = (info) => {
-    if (info.file.status === 'done') {
-      const imageUrl = URL.createObjectURL(info.file.originFileObj);
-      setSelectedImage(info.file)
-      setImageUrl(imageUrl);
+    if (selectedImage != null) {
+      await file_upload_service.uploadImage(selectedImage, loadingDispatch).then(async url => {
+        await safari_service.addSafari({ ...values, image: url }, dispatch).then((value) => {
+          message.success("Safari Added Successfully")
+          history("/safaris")
+        }).catch(err => {
+          console.log("add safari failed " + err)
+          message.error("Safari Adding Failed")
+        })
+      });
     }
   };
 
+  const handleImageUpload = async (file) => {
+    try {
+      setSelectedImage(file)
+      console.log("file seted")
+    } catch (error) {
+      message.error('Failed to upload image');
+    }
+  };
   return (
     <Form
       name="add-safari"
@@ -53,22 +55,12 @@ function AddSafari() {
         <Input />
       </Form.Item>
 
-      <Form.Item
-        label="Image"
-        name="image"
-        rules={[
-          { required: true, message: 'Please select an image!' },
-        ]}
-      >
-        <Upload
-          name="image"
-          accept="image/*"
+      <Form.Item name='image' label="Image">
+        <Upload accept="image/*"
           beforeUpload={() => false}
-          onChange={handleImageUpload}
-        >
-          <Button icon={<UploadOutlined />}>Select Image</Button>
+          onChange={(info) => handleImageUpload(info.file)}>
+          <Button icon={<UploadOutlined />}>Click to Upload</Button>
         </Upload>
-        {imageUrl && <img src={imageUrl} alt="Safari" style={{ width: '100%', marginTop: 10 }} />}
       </Form.Item>
 
       <Form.Item

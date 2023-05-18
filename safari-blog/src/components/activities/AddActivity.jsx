@@ -1,4 +1,4 @@
-import React, { useContext,useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Input, InputNumber, Button, message, Upload } from 'antd';
 import { ActivityContext } from '../../contexts/ActivityContext';
@@ -14,24 +14,29 @@ function AddActivity() {
   const [selectedImage, setSelectedImage] = useState(null)
   const [imageUrl, setImageUrl] = useState(null);
   const handleSubmit = async (values) => {
-    await file_upload_service.uploadImage(selectedImage, loadingDispatch).then(async url => {
-      await activity_service.addActivity({...values,image : url}, dispatch);
-      if (state.error) {
-        message.error('Add Activity failed ' + state.error);
-      } else {
-        message.success('Activity added successfully');
-        form.resetFields();
-        history('/activities');
-      }
-    }).catch(err => {
-      message.error('Add Activity failed ');
-    })
+    if (selectedImage != null) {
+      await file_upload_service.uploadImage(selectedImage, loadingDispatch).then(async url => {
+        await activity_service.addActivity({ ...values, image: url }, dispatch);
+        if (state.error) {
+          message.error('Add Activity failed ' + state.error);
+        } else {
+          message.success('Activity added successfully');
+          form.resetFields();
+          history('/activities');
+        }
+      }).catch(err => {
+        message.error('Add Activity failed ');
+      })
+    } else {
+      console.log("asda")
+    }
   };
-  const handleImageUpload = (info) => {
-    if (info.file.status === 'done') {
-      const imageUrl = URL.createObjectURL(info.file.originFileObj);
-      setSelectedImage(info.file)
-      setImageUrl(imageUrl);
+  const handleImageUpload = async (file) => {
+    try {
+      setSelectedImage(file)
+      console.log("file seted")
+    } catch (error) {
+      message.error('Failed to upload image');
     }
   };
 
@@ -64,22 +69,12 @@ function AddActivity() {
       >
         <InputNumber />
       </Form.Item>
-      <Form.Item
-        label="Image URL"
-        name="image"
-        rules={[
-          { required: true, message: 'Please input the food image URL!' },
-        ]}
-      >
-        <Upload
-          name="image"
-          accept="image/*"
+      <Form.Item name='image' label="Image">
+        <Upload accept="image/*"
           beforeUpload={() => false}
-          onChange={handleImageUpload}
-        >
-          <Button icon={<UploadOutlined />}>Select Image</Button>
+          onChange={(info) => handleImageUpload(info.file)}>
+          <Button icon={<UploadOutlined />}>Click to Upload</Button>
         </Upload>
-        {imageUrl && <img src={imageUrl} alt="Safari" style={{ width: '100%', marginTop: 10 }} />}
       </Form.Item>
 
       <Form.Item

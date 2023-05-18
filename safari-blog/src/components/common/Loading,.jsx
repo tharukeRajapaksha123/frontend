@@ -4,7 +4,7 @@ import { Spin } from 'antd';
 function Loading() {
     return (
         <div style={{ textAlign: 'center', marginTop: '20px' }}>
-            <Spin size="large" spinning={loadingState.isLoading} />
+            <Spin size="large" />
         </div>
     );
 }
