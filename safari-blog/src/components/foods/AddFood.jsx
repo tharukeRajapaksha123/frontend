@@ -32,14 +32,14 @@ function AddFood() {
     }
   };
 
-  const handleImageUpload = (info) => {
-    if (info.file.status === 'done') {
-      const imageUrl = URL.createObjectURL(info.file.originFileObj);
-      setSelectedImage(info.file)
-      setImageUrl(imageUrl);
+  const handleImageUpload = async (file) => {
+    try {
+      setSelectedImage(file)
+      console.log("file seted")
+    } catch (error) {
+      message.error('Failed to upload image');
     }
   };
-
   return (
     <Form
       form={form}
@@ -70,23 +70,12 @@ function AddFood() {
         <InputNumber />
       </Form.Item>
 
-      <Form.Item
-        label="Image URL"
-        name="image"
-        rules={[
-          { required: true, message: 'Please input the food image URL!' },
-
-        ]}
-      >
-        <Upload
-          name="image"
-          accept="image/*"
+      <Form.Item name='image' label="Image">
+        <Upload accept="image/*"
           beforeUpload={() => false}
-          onChange={handleImageUpload}
-        >
-          <Button icon={<UploadOutlined />}>Select Image</Button>
+          onChange={(info) => handleImageUpload(info.file)}>
+          <Button icon={<UploadOutlined />}>Click to Upload</Button>
         </Upload>
-        {imageUrl && <img src={imageUrl} alt="Safari" style={{ width: '100%', marginTop: 10 }} />}
       </Form.Item>
 
       <Form.Item
